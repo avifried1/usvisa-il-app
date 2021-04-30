@@ -9,6 +9,6 @@ usvisa:
     token: 11111111111:sdfghjkloijhgfdvbnjk_dfg
     chat-id: "11111111" # https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id
   current_appointment:
-    year: 2021
+    year: 2222
     month: 8
     day: 6
