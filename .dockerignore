@@ -1,8 +1,8 @@
 /conf/config.yaml
 /venv
+/.git
 /.idea
 /.vscode
 *.log
 **/*.pyc
 new_appointment.txt
-.env

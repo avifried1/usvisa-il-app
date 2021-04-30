@@ -11,16 +11,7 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 * FireFox (for Pi: `sudo apt-get install firefox-esr`)
 * cron (to schedule)
 
-For RaspberryPi (currently in development):
-
-* xvfb
-
-```shell
-sudo apt-get update && sudo apt-get upgrade
-sudo apt-get install firefox-esr xvfb 
-```
-
-**Currently only works with Mac**
+**Currently only works with Mac** (see [todo](#todo))
 
 ### Installing dependencies
 
@@ -75,6 +66,19 @@ If a Telegram token is set in the configuration you'll receive Telegram alerts w
 When the scheduler finds an appointment, it schedules it and creates a file `new_appointment.txt` with the details. This is to prevent from scheduling a new, later appointment if running afterwards (since the configuration is still set with the older appointment).
 
 To keep rescheduling, alter the current appointment details in the configuration with the details of the new appointment, and delete `new_appointment.txt`
+
+### Running with Docker (work in progress)
+
+```shell
+cp example.env .env
+```
+
+Set the environment variables.
+
+```shell
+docker build -t usvisa-il-app .
+docker run --env-file .env --rm usvisa-il-app
+```
 
 ### TODO
 

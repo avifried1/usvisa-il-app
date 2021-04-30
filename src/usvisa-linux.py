@@ -1,17 +1,15 @@
-# TODO: Needs further work and testing
-
+#!/usr/bin/env python
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 from selenium import webdriver
 from datetime import datetime
-from os import path
+from os import path, environ
 from element_paths import ElementPath
 import bot_null
 import app_scheduler
 import telegram
 import time
 import logging
-import yaml
 from pyvirtualdisplay import Display
 
 display = Display(visible=False, size=(800, 600))
@@ -22,35 +20,22 @@ def get_browser(binary=None):
     firefox_options = Options()
     firefox_options.headless = True
     firefox_options.set_preference("gfx.webrender.all", True)
-    return webdriver.Firefox(firefox_binary=binary, firefox_options=firefox_options)
+    return webdriver.Firefox(firefox_binary=binary, options=firefox_options)
 
 # Logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger('usvisa')
 
-# Config
-config = {}
-with open(path.join(path.dirname(__file__), '..', 'conf/config.yaml'), 'r') as stream:
-    try:
-        module_config = yaml.safe_load(stream)
-        config = module_config.get('usvisa')
-    except yaml.YAMLError as exc:
-        log.info(exc)
-        exit(1)
-
-current_appointment = config.get('current_appointment')
-current_appointment_year = current_appointment.get('year', '2222')
-current_appointment_month = current_appointment.get('month', '12')
-current_appointment_day = current_appointment.get('day', '31')
-visa_creds = config.get('visa-credentials')
-visa_username = visa_creds.get('username')
-visa_password = visa_creds.get('password')
-telegram_config = config.get('telegram', {})
-telegram_token = telegram_config.get('token')
-chat_id = telegram_config.get('chat-id')
-ff = config.get('firefox-path-mac')
-url = config.get('visa-app-url')
+current_appointment_year = environ.get('current_appointment_year', '2222')
+current_appointment_month = environ.get('current_appointment_month', '12')
+current_appointment_day = environ.get('current_appointment_day', '31')
+visa_username = environ.get('visa_creds_username')
+visa_password = environ.get('visa_creds_password')
+telegram_token = environ.get('telegram_token')
+chat_id = environ.get('telegram_chat_id')
+ff = environ.get('firefox_path')
+url = environ.get('visa_app_url')
 
 browser = None
 firefox_binary = FirefoxBinary(ff)

@@ -1,7 +1,7 @@
 usvisa:
   visa-app-url: https://ais.usvisa-info.com/he-il/niv/schedule/33043164/appointment
   firefox-path-mac: /Applications/Firefox.app/Contents/MacOS/firefox
-  firefox-path-pi: /usr/bin/firefox
+  firefox-path-linux: /usr/bin/firefox
   visa-credentials:
     username: you@gmail.com
     password: "password123"
