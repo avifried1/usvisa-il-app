@@ -1,0 +1,6 @@
+/conf/config.yaml
+/venv
+/.idea
+/.vscode
+*.log
+**/*.pyc

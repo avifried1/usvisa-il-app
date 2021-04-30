@@ -1,0 +1,14 @@
+usvisa:
+  visa-app-url: https://ais.usvisa-info.com/he-il/niv/schedule/33043164/appointment
+  firefox-path-mac: /Applications/Firefox.app/Contents/MacOS/firefox
+  firefox-path-pi: /usr/bin/firefox
+  visa-credentials:
+    username: you@gmail.com
+    password: "password123"
+  telegram: # https://core.telegram.org/bots
+    token: 11111111111:sdfghjkloijhgfdvbnjk_dfg
+    chat-id: "11111111" # https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id
+  current_appointment:
+    year: 2021
+    month: 8
+    day: 6

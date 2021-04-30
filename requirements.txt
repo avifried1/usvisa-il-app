@@ -1,0 +1,5 @@
+python-telegram-bot==13.1
+emoji==1.2.0
+selenium
+pyyaml
+pyvirtualdisplay
