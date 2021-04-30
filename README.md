@@ -30,12 +30,30 @@ source ./venv/bin/activate # for fish shell: source ./venv/bin/activate.fish
 pip3 install -r requirements.txt
 ```
 
-### config
+### Setting the configuration
 
-* Set your username & password
+Copy the [sample configuration](conf/config.example.yaml):
+
+```shell
+cp conf/config.example.yaml conf/config.yaml
+```
+
+inside the new `conf/config.yaml` file:
+
+* Set your embassy username & password
 * Set your current appointment date
+* If you have a [telegram bot](#get-telegram-alerts), set the token and chat_id
 
 ### Running
+
+inside the main project directory:
+
+```shell
+source ./venv/bin/activate
+python ./src/usvisa.py
+```
+
+### Running on a schedule with Cron
 
 As part of a cron:
 
@@ -51,6 +69,18 @@ PATH=/usr/local/bin/:$PATH
 ### Get Telegram Alerts
 
 If a Telegram token is set in the configuration you'll receive Telegram alerts when a new appointment is scheduled.
+
+### Keep looking for earlier appointments
+
+When the scheduler finds an appointment, it schedules it and creates a file `new_appointment.txt` with the details. This is to prevent from scheduling a new, later appointment if running afterwards (since the configuration is still set with the older appointment).
+
+To keep rescheduling, alter the current appointment details in the configuration with the details of the new appointment, and delete `new_appointment.txt`
+
+### TODO
+
+- [ ] Dockerize for running in RasPi
+- [ ] Extract current appointment data into a file to parse and update once new meeting is set
+
 
 ## Credit
 
