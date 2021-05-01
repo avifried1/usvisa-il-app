@@ -5,8 +5,8 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 
 ### Requirements
 
-* Docker
-* cron (to schedule)
+* [Docker][get docker]
+* Cron (to schedule)
 
 ### Building Docker Image
 
@@ -52,6 +52,10 @@ crontab -e
 
 If a Telegram token is set in the configuration you'll receive Telegram alerts when a new appointment is scheduled.
 
+### Screenshot
+
+Once a new appointment was set, a screenshot `appointment_screenshot.png` will be saved into the project's main directory, and a file `new_appointment.txt` will be saved with the appointment details
+
 ### Keep looking for earlier appointments
 
 When the scheduler finds an appointment, it schedules it and creates a file `new_appointment.txt` with the details. This is to prevent from scheduling a new, later appointment if running afterwards (since the configuration is still set with the older appointment).
@@ -85,6 +89,5 @@ Avi Friedman. Buy me a [beer][buy me coffee]!
 Licensed under the MIT license (see: [license](LICENSE))
 
 [israel embassy site]: https://ais.usvisa-info.com/he-il
-[armv6 geckodriver bins]: https://github.com/d0ku/GeckoDriver_ARMv6
-[geckodriver bins]: https://github.com/mozilla/geckodriver/releases
+[get docker]: https://docs.docker.com/get-docker/
 [buy me coffee]: https://www.buymeacoffee.com/avifr
