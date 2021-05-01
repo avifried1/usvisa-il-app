@@ -25,6 +25,7 @@ class AppScheduler:
         self.browser.find_elements_by_id(ElementPath.APPOINTMENT_SUBMIT_ID).click()
 
         self.logger.info("appointment set!")
+        self.browser.save_screenshot("/shared/appointment_screenshot.png")
         text_msg2 = ":thumbs_up:  Scheduled new visa Appointment for {0}, {1}".format(new_appointment_date, hour)
         self.bot.sendMessage(chat_id=chat_id, text=emojize(text_msg2))
         f = open("new_appointment.txt", "w")

@@ -5,20 +5,13 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 
 ### Requirements
 
-* [Geckodriver][geckodriver bins] (for armv6 arch - look [here][armv6 geckodriver bins])
-* python > 2.7
-* virtualenv
-* FireFox (for Pi: `sudo apt-get install firefox-esr`)
+* Docker
 * cron (to schedule)
 
-**Currently only works with Mac** (see [todo](#todo))
-
-### Installing dependencies
+### Building Docker Image
 
 ```shell
-virtualenv venv
-source ./venv/bin/activate # for fish shell: source ./venv/bin/activate.fish
-pip3 install -r requirements.txt
+docker build -t usvisa-il-app .
 ```
 
 ### Setting the configuration
@@ -26,22 +19,21 @@ pip3 install -r requirements.txt
 Copy the [sample configuration](conf/config.example.yaml):
 
 ```shell
-cp conf/config.example.yaml conf/config.yaml
+cp example.env .env
 ```
 
-inside the new `conf/config.yaml` file:
+inside the new `.env` file:
 
-* Set your embassy username & password
-* Set your current appointment date
-* If you have a [telegram bot](#get-telegram-alerts), set the token and chat_id
+* Set your embassy username & password (`visa_creds_username`, `visa_creds_password`)
+* Set your current appointment date (`current_appointment_year`, `current_appointment_month`, `current_appointment_day`)
+* If you have a [telegram bot](#get-telegram-alerts), set the token and chat_id (`telegram_token`, `telegram_chat_id`)
 
 ### Running
 
 inside the main project directory:
 
 ```shell
-source ./venv/bin/activate
-python ./src/usvisa.py
+docker run --env-file .env -v $PWD:/shared/ --rm usvisa-il-app
 ```
 
 ### Running on a schedule with Cron
@@ -53,8 +45,7 @@ crontab -e
 ```
 
 ```shell
-PATH=/usr/local/bin/:$PATH
-0,10,15,30,45 0-4 * * 0-5 cd /<PATH_TO>/usvisa-il-app && source ./venv/bin/activate && python ./src/usvisa.py >> usvisa.log 2>&1
+0,10,15,30,45 7-12 * * 0-5 cd /<PATH_TO>/usvisa-il-app && docker run --env-file .env -v $PWD:/shared/ --rm usvisa-il-app >> usvisa.log 2>&1
 ```
 
 ### Get Telegram Alerts
@@ -82,7 +73,6 @@ docker run --env-file .env --rm usvisa-il-app
 
 ### TODO
 
-- [ ] Dockerize for running in RasPi
 - [ ] Extract current appointment data into a file to parse and update once new meeting is set
 
 

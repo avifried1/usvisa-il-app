@@ -1,6 +1,6 @@
 # Work in progress
 # docker build -t usvisa-il-app .
-# docker run --env-file .env --rm usvisa-il-app
+# docker run --env-file .env -v $PWD:/shared/ --rm usvisa-il-app
 FROM python:3.8.7-slim
 MAINTAINER Avi Friedman
 
@@ -13,6 +13,6 @@ RUN apt-get -y update && apt-get -y upgrade &&\
     tar -C /usr/local/bin/ -xvf geckodriver-v0.29.1-linux64.tar.gz &&\
     rm geckodriver-v0.29.1-linux64.tar.gz &&\
     pip3 install -r requirements.txt &&\
-    chmod +x ./src/usvisa-linux.py
+    chmod +x ./src/main.py
 
-CMD ["./src/usvisa-linux.py"]
+CMD ["./src/main.py"]

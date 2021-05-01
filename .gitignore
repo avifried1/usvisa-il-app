@@ -6,3 +6,4 @@
 **/*.pyc
 new_appointment.txt
 .env
+*.png

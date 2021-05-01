@@ -12,44 +12,43 @@ import time
 import logging
 from pyvirtualdisplay import Display
 
-display = Display(visible=False, size=(800, 600))
-display.start()
-
-
-def get_browser(binary=None):
-    firefox_options = Options()
-    firefox_options.headless = True
-    firefox_options.set_preference("gfx.webrender.all", True)
-    return webdriver.Firefox(firefox_binary=binary, options=firefox_options)
+# Constants
+ff = '/usr/bin/firefox'
+url = 'https://ais.usvisa-info.com/he-il/niv/schedule/33043164/appointment'
 
 # Logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger('usvisa')
 
-current_appointment_year = environ.get('current_appointment_year', '2222')
-current_appointment_month = environ.get('current_appointment_month', '12')
-current_appointment_day = environ.get('current_appointment_day', '31')
+# Config
+current_appointment_year = int(environ.get('current_appointment_year', '2222'))
+current_appointment_month = int(environ.get('current_appointment_month', '12'))
+current_appointment_day = int(environ.get('current_appointment_day', '31'))
 visa_username = environ.get('visa_creds_username')
 visa_password = environ.get('visa_creds_password')
 telegram_token = environ.get('telegram_token')
 chat_id = environ.get('telegram_chat_id')
-ff = environ.get('firefox_path')
-url = environ.get('visa_app_url')
 
-browser = None
-firefox_binary = FirefoxBinary(ff)
 if telegram_token is not None:
     bot = telegram.Bot(token=telegram_token)
 else:
     bot = bot_null.BotNull(log)
 
 
+def get_browser(binary=None):
+    display = Display(visible=False, size=(800, 600))
+    display.start()
+    firefox_options = Options()
+    firefox_options.headless = True
+    firefox_options.set_preference("gfx.webrender.all", True)
+    return webdriver.Firefox(firefox_binary=binary, options=firefox_options)
+
 if __name__ == "__main__":
     if path.exists("new_appointment.txt"):
         log.info("new appointment already set! Exiting...")
         exit(0)
-    browser = get_browser(binary=firefox_binary)
+    browser = get_browser(binary=FirefoxBinary(ff))
     browser.get(url)
     scheduler = app_scheduler.AppScheduler(log, browser, bot)
     try:
