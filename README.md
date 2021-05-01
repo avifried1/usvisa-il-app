@@ -45,8 +45,11 @@ crontab -e
 ```
 
 ```shell
+PATH=/usr/local/bin/:$PATH
 0,10,15,30,45 7-12 * * 0-5 cd /<PATH_TO>/usvisa-il-app && docker run --env-file .env -v $PWD:/shared/ --rm usvisa-il-app >> usvisa.log 2>&1
 ```
+
+**note**: 1st row is where to add the docker installation location to your path. This might look different depending on your OS (the example will work in linux/mac)
 
 ### Get Telegram Alerts
 
