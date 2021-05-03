@@ -1,6 +1,8 @@
 usvisa-il-app
 =============
 
+**Disclaimer**: This code is meant to facilitate scheduling meetings for the US embassy in Israel. It is not meant for abusing the appointment booking system. Please notice that you may get blocked for misusing the system. I take no responsibility for that.
+
 Check and schedule visa appointments in the [israeli embassy site][israel embassy site]
 
 ### Requirements
@@ -81,6 +83,7 @@ docker run --env-file .env --rm usvisa-il-app
 ### TODO
 
 - [ ] Extract current appointment data into a file to parse and update once new meeting is set
+- [ ] Support choosing between TLV or Jerusalem
 
 
 ## Credit
