@@ -5,6 +5,7 @@ from selenium import webdriver
 from datetime import datetime
 from os import path, environ
 from element_paths import ElementPath
+from constants import Constants
 import bot_null
 import app_scheduler
 import telegram
@@ -44,8 +45,9 @@ def get_browser(binary=None):
     firefox_options.set_preference("gfx.webrender.all", True)
     return webdriver.Firefox(firefox_binary=binary, options=firefox_options)
 
+
 if __name__ == "__main__":
-    if path.exists("new_appointment.txt"):
+    if path.exists(Constants.APPOINTMENT_FILE_PATH):
         log.info("new appointment already set! Exiting...")
         exit(0)
     browser = get_browser(binary=FirefoxBinary(ff))
