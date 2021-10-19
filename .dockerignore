@@ -1,4 +1,3 @@
-/conf/config.yaml
 /venv
 /.git
 /.idea
@@ -6,3 +5,4 @@
 *.log
 **/*.pyc
 new_appointment.txt
+/src/geckodriver

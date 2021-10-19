@@ -5,7 +5,7 @@ Types of elements are ID, Xpath & CSS Selector
 
 
 class ElementPath(object):
-    LOGIN_BUTTON_XPATH = '/html/body/div[6]/div[3]/div/button/span'
+    LOGIN_BUTTON_XPATH = '/html/body/div[6]/div[3]/div/button'
     USER_EMAIL_ID = 'user_email'
     USER_PASSWORD_ID = 'user_password'
     POLICY_AGREEMENT_CHECKBOX_XPATH = '/html/body/div[5]/main/div[3]/div/div[1]/div/form/div[3]/label/div'

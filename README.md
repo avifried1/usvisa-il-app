@@ -9,6 +9,7 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 
 * [Docker][get docker]
 * Cron (to schedule)
+* (For local dev: Python 3.x with Virtualenv)
 
 ### Building Docker Image
 
@@ -24,7 +25,7 @@ Copy the [sample configuration](conf/config.example.yaml):
 cp example.env .env
 ```
 
-inside the new `.env` file:
+Inside the new `.env` file:
 
 * Set your embassy username & password (`visa_creds_username`, `visa_creds_password`)
 * Set your current appointment date (`current_appointment_year`, `current_appointment_month`, `current_appointment_day`)
@@ -32,7 +33,7 @@ inside the new `.env` file:
 
 ### Running
 
-inside the main project directory:
+Inside the main project directory:
 
 ```shell
 docker run --env-file .env -v $PWD:/shared/ --rm usvisa-il-app
@@ -67,24 +68,25 @@ When the scheduler finds an appointment, it schedules it and creates a file `new
 
 To keep rescheduling, alter the current appointment details in the configuration with the details of the new appointment, and delete `new_appointment.txt`
 
-### Running with Docker (work in progress)
+### Running locally
+
+For easier testing and development cycles (no need to build a docker image) use [main_osx](/src/main_osx.py) for running locally without Docker (currently tested in OSX)
 
 ```shell
-cp example.env .env
-```
+# set up the environment
+virtualenv -p python3 venv
+source ./venv/bin/activate
+# source ./venv/bin/activate.fish for fish CLI users
+pip install -r requirements.txt
 
-Set the environment variables.
-
-```shell
-docker build -t usvisa-il-app .
-docker run --env-file .env --rm usvisa-il-app
+# run:
+python ./src/main_osx.py
 ```
 
 ### TODO
 
 - [ ] Extract current appointment data into a file to parse and update once new meeting is set
 - [ ] Support choosing between TLV or Jerusalem
-
 
 ## Credit
 

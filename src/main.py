@@ -1,21 +1,19 @@
 #!/usr/bin/env python
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 from selenium import webdriver
 from datetime import datetime
 from os import path, environ
 from element_paths import ElementPath
 from constants import Constants
+from pyvirtualdisplay import Display
 import bot_null
 import app_scheduler
 import telegram
 import time
 import logging
-from pyvirtualdisplay import Display
-
-# Constants
-ff = '/usr/bin/firefox'
-url = 'https://ais.usvisa-info.com/he-il/niv/schedule/33043164/appointment'
 
 # Logging
 logging.basicConfig(level=logging.INFO,
@@ -37,46 +35,51 @@ else:
     bot = bot_null.BotNull(log)
 
 
-def get_browser(binary=None):
+def get_browser():
     display = Display(visible=False, size=(800, 600))
     display.start()
     firefox_options = Options()
     firefox_options.headless = True
     firefox_options.set_preference("gfx.webrender.all", True)
-    return webdriver.Firefox(firefox_binary=binary, options=firefox_options)
+    service = Service(Constants.FIREFOX_BIN_PATH, log_path=Constants.LOG_FILE_PATH)
+    return webdriver.Firefox(service=service, options=firefox_options)
 
 
 if __name__ == "__main__":
     if path.exists(Constants.APPOINTMENT_FILE_PATH):
         log.info("new appointment already set! Exiting...")
         exit(0)
-    browser = get_browser(binary=FirefoxBinary(ff))
-    browser.get(url)
+    browser = get_browser()
+    browser.get(Constants.MAIN_URL)
     scheduler = app_scheduler.AppScheduler(log, browser, bot)
     try:
-        button = browser.find_element_by_xpath(ElementPath.LOGIN_BUTTON_XPATH)
-        if button is not None:
-            button.click()
+        try:
+            button = browser.find_element(By.XPATH, ElementPath.LOGIN_BUTTON_XPATH)
+            if button is not None:
+                button.click()
+        except NoSuchElementException:
+            log.info('Button not found, moving on...')
 
         log.info('Logging in {0}'.format(visa_username))
         # login
-        browser.find_element_by_id(ElementPath.USER_EMAIL_ID).send_keys(visa_username)
-        browser.find_element_by_id(ElementPath.USER_PASSWORD_ID).send_keys(visa_password)
-        browser.find_element_by_xpath(ElementPath.POLICY_AGREEMENT_CHECKBOX_XPATH).click()
-        browser.find_element_by_xpath(ElementPath.SIGNIN_BUTTON_XPATH).click()
+        user_email_element = browser.find_element(By.ID, ElementPath.USER_EMAIL_ID)
+        user_email_element.send_keys(visa_username)
+        browser.find_element(By.ID, ElementPath.USER_PASSWORD_ID).send_keys(visa_password)
+        browser.find_element(By.XPATH, ElementPath.POLICY_AGREEMENT_CHECKBOX_XPATH).click()
+        browser.find_element(By.XPATH, ElementPath.SIGNIN_BUTTON_XPATH).click()
 
         # find appointment
         log.info("looking for an appointment date")
         time.sleep(3)
-        datepicker = browser.find_element_by_id(ElementPath.DATE_PICKER_ID).click()
-        appointments = browser.find_elements_by_css_selector(ElementPath.ACTIVE_DAY_CELL_SELECTOR)
+        datepicker = browser.find_element(By.ID, ElementPath.DATE_PICKER_ID).click()
+        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         while len(appointments) == 0:
             log.info("no appointments! Moving to next month...")
             log.debug(appointments)
-            browser.find_element_by_xpath(ElementPath.NEXT_MONTH_XPATH).click()
-            appointments = browser.find_elements_by_css_selector(ElementPath.ACTIVE_DAY_CELL_SELECTOR)
+            browser.find_element(By.XPATH, ElementPath.NEXT_MONTH_XPATH).click()
+            appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         earliest_appointment = appointments[0]
-        day = int(earliest_appointment.find_elements_by_css_selector('*')[0].text)
+        day = int(earliest_appointment.find_elements(By.CSS_SELECTOR, '*')[0].text)
         month = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_MONTH_ATTRIBUTE)) + 1
         year = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_YEAR_ATTRIBUTE))
         new_appointment_date = "{0}-{1}-{2}".format(year, month, day)
