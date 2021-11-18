@@ -57,17 +57,31 @@ if __name__ == "__main__":
             log.info('Button not found, moving on...')
 
         log.info('Logging in {0}'.format(visa_username))
-        # login
+
+        # login screen
         browser.find_element(By.ID, ElementPath.USER_EMAIL_ID).send_keys(visa_username)
         browser.find_element(By.ID, ElementPath.USER_PASSWORD_ID).send_keys(visa_password)
         browser.find_element(By.XPATH, ElementPath.POLICY_AGREEMENT_CHECKBOX_XPATH).click()
         browser.find_element(By.XPATH, ElementPath.SIGNIN_BUTTON_XPATH).click()
+        time.sleep(3)
+
+        # main page
+        group = browser.find_element(By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)
+        group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
+
+        # actions page
+        appointments_accordion = browser.find_elements(By.CLASS_NAME, ElementPath.ACCORDION_BUTTONS_CLASS)
+
+        appointment_reschedule = [el for el in appointments_accordion if el.text == Constants.RESCHEDULE_TEXT_HEB][0]
+        appointment_reschedule.click()
+        appointment_button = appointment_reschedule.find_element(By.CSS_SELECTOR, ElementPath.ACTION_BUTTONS_CLASS)
+        appointment_button.click()
 
         # find appointment
         log.info("looking for an appointment date")
+        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         time.sleep(3)
         datepicker = browser.find_element(By.ID, ElementPath.DATE_PICKER_ID).click()
-        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         while len(appointments) == 0:
             log.info("no appointments! Moving to next month...")
             log.debug(appointments)

@@ -23,7 +23,7 @@ class AppScheduler:
         self.bot.sendMessage(chat_id=chat_id, text=emojize(text_msg1))
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SUBMIT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.browser.find_elements_by_id(ElementPath.APPOINTMENT_SUBMIT_ID).click()
+        self.browser.find_element_by_id(ElementPath.APPOINTMENT_SUBMIT_ID).click()
 
         self.logger.info("appointment set!")
         self.browser.save_screenshot(Constants.APPOINTMENT_SCREENSHOT_PATH)

@@ -61,25 +61,38 @@ if __name__ == "__main__":
             log.info('Button not found, moving on...')
 
         log.info('Logging in {0}'.format(visa_username))
-        # login
-        user_email_element = browser.find_element(By.ID, ElementPath.USER_EMAIL_ID)
-        user_email_element.send_keys(visa_username)
+
+        # login screen
+        browser.find_element(By.ID, ElementPath.USER_EMAIL_ID).send_keys(visa_username)
         browser.find_element(By.ID, ElementPath.USER_PASSWORD_ID).send_keys(visa_password)
         browser.find_element(By.XPATH, ElementPath.POLICY_AGREEMENT_CHECKBOX_XPATH).click()
         browser.find_element(By.XPATH, ElementPath.SIGNIN_BUTTON_XPATH).click()
+        time.sleep(3)
+
+        # main page
+        group = browser.find_element(By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)
+        group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
+
+        # actions page
+        appointments_accordion = browser.find_elements(By.CLASS_NAME, ElementPath.ACCORDION_BUTTONS_CLASS)
+
+        appointment_reschedule = [el for el in appointments_accordion if el.text == Constants.RESCHEDULE_TEXT_HEB][0]
+        appointment_reschedule.click()
+        appointment_button = appointment_reschedule.find_element(By.CSS_SELECTOR, ElementPath.ACTION_BUTTONS_CLASS)
+        appointment_button.click()
 
         # find appointment
         log.info("looking for an appointment date")
+        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         time.sleep(3)
         datepicker = browser.find_element(By.ID, ElementPath.DATE_PICKER_ID).click()
-        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         while len(appointments) == 0:
             log.info("no appointments! Moving to next month...")
             log.debug(appointments)
             browser.find_element(By.XPATH, ElementPath.NEXT_MONTH_XPATH).click()
             appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         earliest_appointment = appointments[0]
-        day = int(earliest_appointment.find_elements(By.CSS_SELECTOR, '*')[0].text)
+        day = int(earliest_appointment.find_elements_by_css_selector('*')[0].text)
         month = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_MONTH_ATTRIBUTE)) + 1
         year = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_YEAR_ATTRIBUTE))
         new_appointment_date = "{0}-{1}-{2}".format(year, month, day)

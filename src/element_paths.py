@@ -11,8 +11,12 @@ class ElementPath(object):
     POLICY_AGREEMENT_CHECKBOX_XPATH = '/html/body/div[5]/main/div[3]/div/div[1]/div/form/div[3]/label/div'
     SIGNIN_BUTTON_XPATH = '/html/body/div[5]/main/div[3]/div/div[1]/div/form/p[1]/input'
     DATE_PICKER_ID = 'appointments_consulate_appointment_date'
+    ACTIVE_GROUP_CARD_CLASS = '.application.attend_appointment.card.success'
+    CONTINUE_BUTTON_CLASS = '.button.primary.small'
+    ACCORDION_BUTTONS_CLASS = 'accordion-item'
+    ACTION_BUTTONS_CLASS = '.button.small.primary.small-only-expanded'
     ACTIVE_DAY_CELL_SELECTOR = '.undefined[data-handler="selectDay"]'
-    NEXT_MONTH_XPATH = '//*[@id="ui-datepicker-div"]/div[2]/div/a/span'
+    NEXT_MONTH_XPATH = '//*[@id="ui-datepicker-div"]/div[2]/div/a'
     APPOINTMENT_TIMES_XPATH = '//*[@id="appointments_consulate_appointment_time"]'
     APPOINTMENT_SUBMIT_ID = 'appointments_submit'
 
