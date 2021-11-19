@@ -2,7 +2,7 @@
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from datetime import datetime
 from os import path, environ
 from element_paths import ElementPath
@@ -11,7 +11,6 @@ import browser_factory
 import bot_null
 import app_scheduler
 import telegram
-import time
 import logging
 
 # Logging
@@ -60,7 +59,7 @@ if __name__ == "__main__":
 
         # main page
         group = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC)\
-            .until(EC.presence_of_element_located((By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)))
+            .until(ec.presence_of_element_located((By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)))
         group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
 
         # actions page
@@ -74,8 +73,10 @@ if __name__ == "__main__":
         # find appointment
         log.info("looking for an appointment date")
         appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
-        time.sleep(3)
-        datepicker = browser.find_element(By.ID, ElementPath.DATE_PICKER_ID).click()
+
+        datepicker = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC) \
+            .until(ec.presence_of_element_located((By.ID, ElementPath.DATE_PICKER_ID))).click()
+
         while len(appointments) == 0:
             log.info("no appointments! Moving to next month...")
             log.debug(appointments)
