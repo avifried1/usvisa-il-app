@@ -19,6 +19,7 @@ class ElementPath(object):
     NEXT_MONTH_XPATH = '//*[@id="ui-datepicker-div"]/div[2]/div/a'
     APPOINTMENT_TIMES_XPATH = '//*[@id="appointments_consulate_appointment_time"]'
     APPOINTMENT_SUBMIT_ID = 'appointments_submit'
+    APPOINTMENT_CONFIRMATION_CLASS = '.button.alert'
 
     DAY_CELL_YEAR_ATTRIBUTE = 'data-year'
     DAY_CELL_MONTH_ATTRIBUTE = 'data-month'

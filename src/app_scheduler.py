@@ -2,6 +2,7 @@
 Schedule appointment
 """
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
 from emoji import emojize
 from element_paths import ElementPath
 from constants import Constants
@@ -23,7 +24,8 @@ class AppScheduler:
         self.bot.sendMessage(chat_id=chat_id, text=emojize(text_msg1))
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SUBMIT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.browser.find_element_by_id(ElementPath.APPOINTMENT_SUBMIT_ID).click()
+        self.browser.find_element(By.ID, ElementPath.APPOINTMENT_SUBMIT_ID).click()
+        self.browser.find_element(By.CSS_SELECTOR, ElementPath.APPOINTMENT_CONFIRMATION_CLASS).click()
 
         self.logger.info("appointment set!")
         self.browser.save_screenshot(Constants.APPOINTMENT_SCREENSHOT_PATH)

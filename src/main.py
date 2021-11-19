@@ -92,7 +92,7 @@ if __name__ == "__main__":
             browser.find_element(By.XPATH, ElementPath.NEXT_MONTH_XPATH).click()
             appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
         earliest_appointment = appointments[0]
-        day = int(earliest_appointment.find_elements_by_css_selector('*')[0].text)
+        day = int(earliest_appointment.find_elements(By.CSS_SELECTOR, '*')[0].text)
         month = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_MONTH_ATTRIBUTE)) + 1
         year = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_YEAR_ATTRIBUTE))
         new_appointment_date = "{0}-{1}-{2}".format(year, month, day)
