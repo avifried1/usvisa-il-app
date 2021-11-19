@@ -1,14 +1,13 @@
 #!/usr/bin/env python
-from selenium.webdriver.firefox.service import Service
-from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 from os import path, environ
 from element_paths import ElementPath
 from constants import Constants
-from pyvirtualdisplay import Display
+import browser_factory
 import bot_null
 import app_scheduler
 import telegram
@@ -34,22 +33,13 @@ if telegram_token is not None:
 else:
     bot = bot_null.BotNull(log)
 
-
-def get_browser():
-    display = Display(visible=False, size=(800, 600))
-    display.start()
-    firefox_options = Options()
-    firefox_options.headless = True
-    firefox_options.set_preference("gfx.webrender.all", True)
-    service = Service(Constants.FIREFOX_BIN_PATH, log_path=Constants.LOG_FILE_PATH)
-    return webdriver.Firefox(service=service, options=firefox_options)
-
-
 if __name__ == "__main__":
     if path.exists(Constants.APPOINTMENT_FILE_PATH):
         log.info("new appointment already set! Exiting...")
         exit(0)
-    browser = get_browser()
+    app_os = environ.get('app_os')
+    log.info('running in {0} context'.format(app_os))
+    browser = browser_factory.BrowserFactory(log).get_browser(app_os)
     browser.get(Constants.MAIN_URL)
     scheduler = app_scheduler.AppScheduler(log, browser, bot)
     try:
@@ -67,10 +57,10 @@ if __name__ == "__main__":
         browser.find_element(By.ID, ElementPath.USER_PASSWORD_ID).send_keys(visa_password)
         browser.find_element(By.XPATH, ElementPath.POLICY_AGREEMENT_CHECKBOX_XPATH).click()
         browser.find_element(By.XPATH, ElementPath.SIGNIN_BUTTON_XPATH).click()
-        time.sleep(3)
 
         # main page
-        group = browser.find_element(By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)
+        group = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC)\
+            .until(EC.presence_of_element_located((By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)))
         group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
 
         # actions page
@@ -106,6 +96,9 @@ if __name__ == "__main__":
             scheduler.schedule_app(earliest_appointment, new_appointment_date, chat_id)
         else:
             scheduler.dont_schedule_app()
+    except Exception as e:
+        log.error(e)
+        browser.save_screenshot(Constants.EXCEPTION_SCREENSHOT_PATH)
     finally:
         browser.quit()
         log.info("done")

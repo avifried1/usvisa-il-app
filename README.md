@@ -9,7 +9,7 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 
 * [Docker][get docker]
 * Cron (to schedule)
-* (For local dev: Python 3.x with Virtualenv)
+* (For local dev: Python >= 3.10 with Virtualenv)
 
 ### Building Docker Image
 
@@ -70,7 +70,7 @@ To keep rescheduling, alter the current appointment details in the configuration
 
 ### Running locally
 
-For easier testing and development cycles (no need to build a docker image) use [main_osx](/src/main_osx.py) for running locally without Docker (currently tested in OSX)
+For easier testing and development cycles (no need to build a docker image) use the same [main](/src/main.py) file, but set the environment variable app_os to `macos` (currently only macOS supported):
 
 ```shell
 # set up the environment
@@ -80,7 +80,7 @@ source ./venv/bin/activate
 pip install -r requirements.txt
 
 # run:
-python ./src/main_osx.py
+app_osx="macos"  python ./src/main.py
 ```
 
 ### TODO

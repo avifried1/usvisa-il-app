@@ -16,7 +16,7 @@ class AppScheduler:
 
     def schedule_app(self, earliest_appointment, new_appointment_date, chat_id):
         earliest_appointment.click()
-        hours = Select(self.browser.find_element_by_xpath(ElementPath.APPOINTMENT_TIMES_XPATH))
+        hours = Select(self.browser.find_element(By.ID, ElementPath.APPOINTMENT_TIMES_ID))
         hour = hours.options[1].text
         self.logger.info("new earlier appointment at {0}, scheduling...".format(hour))
         hours.select_by_index(1)
