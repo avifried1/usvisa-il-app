@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -72,6 +73,7 @@ if __name__ == "__main__":
 
         # find appointment
         log.info("looking for an appointment date")
+        time.sleep(3)
         appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
 
         datepicker = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC) \
