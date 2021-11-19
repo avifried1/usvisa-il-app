@@ -20,6 +20,7 @@ class ElementPath(object):
     APPOINTMENT_TIMES_ID = 'appointments_consulate_appointment_time'
     APPOINTMENT_SUBMIT_ID = 'appointments_submit'
     APPOINTMENT_CONFIRMATION_CLASS = '.button.alert'
+    APPOINTMENT_SUCCESS_CLASS = '.ui-button.ui-corner-all.ui-widget'
 
     DAY_CELL_YEAR_ATTRIBUTE = 'data-year'
     DAY_CELL_MONTH_ATTRIBUTE = 'data-month'
