@@ -36,7 +36,7 @@ if __name__ == "__main__":
     if path.exists(Constants.APPOINTMENT_FILE_PATH):
         log.info("new appointment already set! Exiting...")
         exit(0)
-    app_os = environ.get('app_os')
+    app_os = environ.get('app_os', 'default')
     log.info('running in {0} context'.format(app_os))
     browser = browser_factory.BrowserFactory(log).get_browser(app_os)
     browser.get(Constants.MAIN_URL)
