@@ -9,7 +9,10 @@ Check and schedule visa appointments in the [israeli embassy site][israel embass
 
 * [Docker][get docker]
 * Cron (to schedule)
-* (For local dev: Python >= 3.10 with Virtualenv)
+
+For local dev & testing:
+* Python >= 3.10 with Virtualenv
+* Firefox
 
 ### Building Docker Image
 
@@ -82,6 +85,10 @@ pip install -r requirements.txt
 # run:
 app_osx="macos"  python ./src/main.py
 ```
+
+### Troubleshooting
+
+When an error occurs while running inside a Docker container, a screenshot is saved to allow for debugging.
 
 ### TODO
 

@@ -1,6 +1,7 @@
 """
 Schedule appointment
 """
+import time
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from emoji import emojize
@@ -26,7 +27,7 @@ class AppScheduler:
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SUBMIT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.browser.find_element(By.ID, ElementPath.APPOINTMENT_SUBMIT_ID).click()
         self.browser.find_element(By.CSS_SELECTOR, ElementPath.APPOINTMENT_CONFIRMATION_CLASS).click()
-        self.browser.find_element(By.CSS_SELECTOR, ElementPath.APPOINTMENT_SUCCESS_CLASS).click()
+        time.sleep(4)
 
         self.logger.info("appointment set!")
         self.browser.save_screenshot(Constants.APPOINTMENT_SCREENSHOT_PATH)
