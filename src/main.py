@@ -10,7 +10,7 @@ from element_paths import ElementPath
 from constants import Constants
 import browser_factory
 import bot_null
-import app_scheduler
+from app_scheduler import AppScheduler
 import telegram
 import logging
 
@@ -34,14 +34,14 @@ else:
     bot = bot_null.BotNull(log)
 
 if __name__ == "__main__":
-    if path.exists(Constants.APPOINTMENT_FILE_PATH):
+    app_os = environ.get('app_os', Constants.DEFAULT_CONTEXT)
+    if path.exists(AppScheduler.get_app_filepath_by_context(app_os)):
         log.info("new appointment already set! Exiting...")
         exit(0)
-    app_os = environ.get('app_os', 'default')
     log.info('running in {0} context'.format(app_os))
     browser = browser_factory.BrowserFactory(log).get_browser(app_os)
     browser.get(Constants.MAIN_URL)
-    scheduler = app_scheduler.AppScheduler(log, browser, bot)
+    scheduler = AppScheduler(log, browser, app_os, bot)
     try:
         try:
             button = browser.find_element(By.XPATH, ElementPath.LOGIN_BUTTON_XPATH)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         browser.find_element(By.XPATH, ElementPath.SIGNIN_BUTTON_XPATH).click()
 
         # main page
-        group = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC)\
+        group = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC) \
             .until(ec.presence_of_element_located((By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)))
         group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
 

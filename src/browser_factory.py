@@ -14,9 +14,9 @@ class BrowserFactory:
 
     def get_browser(self, os):
         return {
-            'macos': self._osx_browser,
-            'default': self._default_browser
-        }.get(os, 'default')()
+            Constants.MACOS_CONTEXT: self._osx_browser,
+            Constants.DEFAULT_CONTEXT: self._default_browser
+        }.get(os, Constants.DEFAULT_CONTEXT)()
 
     @staticmethod
     def _osx_browser():
