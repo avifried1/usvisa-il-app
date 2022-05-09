@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import time
+import json
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -34,6 +35,7 @@ else:
     bot = bot_null.BotNull(log)
 
 if __name__ == "__main__":
+    current_app_datetime = datetime(current_appointment_year, current_appointment_month, current_appointment_day)
     app_os = environ.get('app_os', Constants.DEFAULT_CONTEXT)
     if path.exists(AppScheduler.get_app_filepath_by_context(app_os)):
         log.info("new appointment already set! Exiting...")
@@ -63,40 +65,56 @@ if __name__ == "__main__":
             .until(ec.presence_of_element_located((By.CSS_SELECTOR, ElementPath.ACTIVE_GROUP_CARD_CLASS)))
         group.find_element(By.CSS_SELECTOR, ElementPath.CONTINUE_BUTTON_CLASS).click()
 
-        # actions page
-        appointments_accordion = browser.find_elements(By.CLASS_NAME, ElementPath.ACCORDION_BUTTONS_CLASS)
+        # Navigate straight to lookup appointments times
+        browser.get(
+            ':'.join([
+                'view-source',
+                browser.current_url.replace(Constants.ACTIONS_PAGE_PATH, Constants.TEL_AVIV_TIMES_PATH)
+            ])
+        )
+        appointments_text = browser.find_element(By.TAG_NAME, 'pre').text
+        appointments_json = json.loads(appointments_text)
+        earliest_date = datetime.strptime(appointments_json[0].get('date'), '%Y-%m-%d')
+        log.info("current appointment date: {0}".format(current_app_datetime))
+        log.info("Earliest available appointment date: {0}".format(earliest_date))
 
-        appointment_reschedule = [el for el in appointments_accordion if el.text == Constants.RESCHEDULE_TEXT_HEB][0]
-        appointment_reschedule.click()
-        appointment_button = appointment_reschedule.find_element(By.CSS_SELECTOR, ElementPath.ACTION_BUTTONS_CLASS)
-        appointment_button.click()
+        if earliest_date < current_app_datetime:
+            # Back to Actions page to set appointment!
+            browser.back()
+            appointments_accordion = browser.find_elements(By.CLASS_NAME, ElementPath.ACCORDION_BUTTONS_CLASS)
 
-        # find appointment
-        log.info("looking for an appointment date")
-        time.sleep(3)
-        appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
+            appointment_reschedule = [el for el in appointments_accordion if el.text == Constants.RESCHEDULE_TEXT_HEB][0]
+            appointment_reschedule.click()
+            appointment_button = appointment_reschedule.find_element(By.CSS_SELECTOR, ElementPath.ACTION_BUTTONS_CLASS)
+            appointment_button.click()
 
-        datepicker = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC) \
-            .until(ec.presence_of_element_located((By.ID, ElementPath.DATE_PICKER_ID))).click()
-
-        while len(appointments) == 0:
-            log.info("no appointments! Moving to next month...")
-            log.debug(appointments)
-            browser.find_element(By.XPATH, ElementPath.NEXT_MONTH_XPATH).click()
+            # find appointment
+            log.info("looking for appointment date")
+            time.sleep(3)
             appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
-        earliest_appointment = appointments[0]
-        day = int(earliest_appointment.find_elements(By.CSS_SELECTOR, '*')[0].text)
-        month = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_MONTH_ATTRIBUTE)) + 1
-        year = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_YEAR_ATTRIBUTE))
-        new_appointment_date = "{0}-{1}-{2}".format(year, month, day)
-        current_app_datetime = datetime(current_appointment_year, current_appointment_month, current_appointment_day)
-        new_app_datetime = datetime(year, month, day)
-        log.info("found appointments! Earliest date: {0}".format(new_appointment_date))
-        log.info("current appointment: {0}".format(current_app_datetime))
-        log.info("new appointment: {0}".format(new_app_datetime))
 
-        if new_app_datetime < current_app_datetime:
-            scheduler.schedule_app(earliest_appointment, new_appointment_date, chat_id)
+            datepicker = WebDriverWait(browser, Constants.LOGIN_WAIT_TIMEOUT_SEC) \
+                .until(ec.presence_of_element_located((By.ID, ElementPath.DATE_PICKER_ID))).click()
+
+            while len(appointments) == 0:
+                log.info("no appointments! Moving to next month...")
+                log.debug(appointments)
+                browser.find_element(By.XPATH, ElementPath.NEXT_MONTH_XPATH).click()
+                appointments = browser.find_elements(By.CSS_SELECTOR, ElementPath.ACTIVE_DAY_CELL_SELECTOR)
+            earliest_appointment = appointments[0]
+            day = int(earliest_appointment.find_elements(By.CSS_SELECTOR, '*')[0].text)
+            month = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_MONTH_ATTRIBUTE)) + 1
+            year = int(earliest_appointment.get_attribute(ElementPath.DAY_CELL_YEAR_ATTRIBUTE))
+            new_appointment_date = "{0}-{1}-{2}".format(year, month, day)
+
+            new_app_datetime = datetime(year, month, day)
+            log.info("Current appointment date: {0}".format(current_app_datetime))
+            log.info("Earliest available appointment date: {0}".format(new_app_datetime))
+
+            if new_app_datetime < current_app_datetime:
+                scheduler.schedule_app(earliest_appointment, new_appointment_date, chat_id)
+            else:
+                scheduler.dont_schedule_app()
         else:
             scheduler.dont_schedule_app()
     except Exception as e:
